@@ -2,9 +2,11 @@ import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_application_1/carousel_slider.dart';
 import 'package:flutter_application_1/home_screen.dart';
 import 'package:flutter_application_1/home_sqflite.dart';
 import 'package:flutter_application_1/login_screen.dart';
+import 'package:flutter_application_1/review.dart';
 import 'package:flutter_application_1/routing/app_router.dart';
 import 'package:flutter_application_1/screen_one.dart';
 import 'package:flutter_application_1/splash_screen.dart';
@@ -65,7 +67,7 @@ class MyApp extends StatelessWidget {
             //   systemNavigationBarColor: Colors.green,
             //   systemNavigationBarDividerColor: Color(0xFFC62828),
             // ))),
-            home: SplashScreen(),
+            home: CarouselSliderScreen(),
             // initialRoute: Routes.splashScreen,
             // onGenerateRoute: RouteGenerator.getRoute,
           );
