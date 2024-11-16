@@ -11,6 +11,7 @@ import 'package:flutter_application_1/routing/app_router.dart';
 import 'package:flutter_application_1/screen_one.dart';
 import 'package:flutter_application_1/shared_helper.dart';
 import 'package:flutter_application_1/splash_screen.dart';
+import 'package:flutter_application_1/sqflite_screen.dart';
 import 'package:flutter_application_1/theme_mode.dart';
 import 'package:flutter_application_1/widgets_screen.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -32,6 +33,10 @@ void main() async {
 
   // SharedPreferencesHelper.removeData(key: "key");
   // print(SharedPreferencesHelper.getData(key: "key"));
+
+
+
+ 
 
   runApp(MyApp());
 }
@@ -86,28 +91,37 @@ class _MyAppState extends State<MyApp> {
                   displayLarge: TextStyle(color: Colors.red, fontSize: 22),
                   displayMedium: TextStyle(color: Colors.white, fontSize: 20),
                 )),
-            themeMode: SharedPreferencesHelper.getData(key: "isDark") == true
-                ? ThemeMode.light
-                : ThemeMode.dark,
-            home: Scaffold(
-              appBar: AppBar(
-                actions: [
-                  IconButton(
-                      onPressed: () {
-                        setState(() {
-                          isDark = !isDark;
+            themeMode: 
+            // SharedPreferencesHelper.getData(key: "isDark") == true 
+            //     ? 
+                ThemeMode.light , 
+                // : ThemeMode.dark,
+            // home: Scaffold(
+            //   appBar: AppBar(
+            //     actions: [
+            //       IconButton(
+            //           onPressed: () {
+            //             setState(() {
+            //               isDark = !isDark;
 
-                          // print("isDark $isDark");
-                        });
-                        SharedPreferencesHelper.saveData(
-                            key: "isDark", value: isDark);
-                        print(
-                            "isDark ${SharedPreferencesHelper.getData(key: "isDark")}");
-                      },
-                      icon: Icon(Icons.dark_mode))
-                ],
-              ),
-            ),
+            //               // print("isDark $isDark");
+            //             });
+            //             SharedPreferencesHelper.saveData(
+            //                 key: "isDark", value: isDark);
+            //             print(
+            //                 "isDark ${SharedPreferencesHelper.getData(key: "isDark")}");
+            //           },
+            //           icon: Icon(
+            //             Icons.dark_mode,
+            //             color: SharedPreferencesHelper.getData(key: "isDark") ==
+            //                     true
+            //                 ? Colors.green
+            //                 : Colors.red,
+            //           ))
+            //     ],
+            //   ),
+            // ),
+            home: SqfliteScreen(),
           );
         });
   }
