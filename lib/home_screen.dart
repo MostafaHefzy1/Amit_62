@@ -598,18 +598,19 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
-                const Align(
+                 Align(
                   alignment: Alignment.centerRight,
                   child: Text(
                     "data",
-                    style: TextStyle(fontSize: 25, color: Colors.black),
+                    // style: TextStyle(fontSize: 25, color: Colors.black),
+                    style: Theme.of(context).textTheme.displayLarge!,
                   ),
                 ),
-                const Align(
+                 Align(
                   alignment: Alignment.center,
                   child: Text(
                     "data",
-                    style: TextStyle(fontSize: 25, color: Colors.black),
+                    style:Theme.of(context).textTheme.displayLarge!,
                   ),
                 ),
               ],
