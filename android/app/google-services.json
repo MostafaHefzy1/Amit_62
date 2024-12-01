@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "656571591297",
+    "project_id": "fir-amit-62",
+    "storage_bucket": "fir-amit-62.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:656571591297:android:71e699a6745eff6451bb80",
+        "android_client_info": {
+          "package_name": "com.example.firebaseamit"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2sZx04kObZiENbt-kYbrloDMNplKqbFs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
