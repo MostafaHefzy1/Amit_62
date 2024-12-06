@@ -7,17 +7,20 @@ class CustomTextFormFiled extends StatelessWidget {
   final IconButton? suffixIcon;
   final Function? validator;
   final TextEditingController controller;
+  final TextInputType keyboardType  ;
   const CustomTextFormFiled(
       {super.key,
       required this.hintText,
       this.prefixIcon,
       this.suffixIcon,
+      this.keyboardType = TextInputType.name , 
       required this.validator,
       required this.controller});
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       // obscureText: true,
+      keyboardType:keyboardType ,
       validator: (String? value) {
         validator!(value);
       },
@@ -26,8 +29,8 @@ class CustomTextFormFiled extends StatelessWidget {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
           hintText: hintText,
           contentPadding: const EdgeInsets.all(5),
-          prefixIconColor: Colors.amber,
-          suffixIconColor: Colors.amber,
+          prefixIconColor: Colors.brown,
+          suffixIconColor: Colors.brown,
           prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
           suffixIcon: suffixIcon),
     );

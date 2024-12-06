@@ -1,17 +1,12 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/core/network/global/dio_helper.dart';
-import 'package:flutter_application_1/screens/home_screen.dart';
-import 'package:flutter_application_1/core/models/login_model.dart';
-import 'package:flutter_application_1/screens/news/business_home_screen.dart';
-import 'package:flutter_application_1/screens/news/science_home_screen%20copy.dart';
-import 'package:flutter_application_1/screens/news/sports_home_screen.dart';
-import 'package:flutter_application_1/core/models/news_model.dart';
-import 'package:flutter_application_1/core/network/lcoal/sharedpref_helper.dart';
+import 'package:flutter_application_1/core/local/shared_preferences_helper.dart';
+import 'package:flutter_application_1/core/models/user_model.dart';
+import 'package:flutter_application_1/ui/profile_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 part 'logic_state.dart';
 
@@ -22,155 +17,115 @@ class LogicCubit extends Cubit<LogicState> {
     return BlocProvider.of(context);
   }
 
-  // static LogicCubit get(context) => BlocProvider.of(context);
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
 
-  List<Widget> screens = [
-    SportsNewsHomeScreen(),
-    BusinessHomeScreen(),
-    const ScienceHomeScreen()
-  ];
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
-  int index = 0;
-  void changeIndex(int value) {
-    index = value;
-    emit(EmitChangeIndex());
-  }
-
-  NewsModel? businessNewsModel;
-  getArticalesBusiness() async {
-    await DioHelper.getData(endpoint: "everything", queryParameters: {
-      "language": "en",
-      "q": "Business",
-      "apiKey": "9bea17d1ed014375a4156ef51c6a8abe"
-    }).then((value) {
-      businessNewsModel = NewsModel.fromJson(value.data);
-      emit(NewsArticleSuccessState());
-    }).catchError((error) {
-      emit(NewsArticleFailedState());
-    });
-  }
-
-  NewsModel? newsModel;
-  getArticales() async {
-    await DioHelper.getData(endpoint: "everything", queryParameters: {
-      "language": "en",
-      "q": "sports",
-      "apiKey": "9bea17d1ed014375a4156ef51c6a8abe"
-    }).then((value) {
-      newsModel = NewsModel.fromJson(value.data);
-      emit(NewsArticleSuccessState());
-    }).catchError((error) {
-      emit(NewsArticleFailedState());
-    });
-  }
-
-  NewsModel? scienceNewsModel;
-  getSceience() async {
-    await DioHelper.getData(endpoint: "everything", queryParameters: {
-      "language": "en",
-      "q": "science",
-      "apiKey": "9bea17d1ed014375a4156ef51c6a8abe"
-    }).then((value) {
-      print("object $value");
-      scienceNewsModel = NewsModel.fromJson(value.data);
-      emit(NewsArticleSuccessState());
-    }).catchError((error) {
-      emit(NewsArticleFailedState());
-    });
-  }
-
-  LoginModel? loginModel;
-  void login(
-      {required String phone,
-      required String password,
-      required BuildContext context}) {
-    emit(LoginLoadingState());
-    DioHelper.postData(
-        endpoint: "auth/login",
-        data: {"phone": phone, "password": password}).then((value) {
-      log(value.data["access_token"]);
-      loginModel = LoginModel.fromJson(value.data);
-      SharedprefHelper.saveData(key: "token", value: loginModel!.accessToken!);
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (_) => HomeScreen()));
-      emit(LoginSuccessState());
-    }).catchError((error) {
-      emit(LoginFailedState());
-    });
-  }
-
-  bool isObscureText = true;
-  IconData iconDataSuffixIcon = Icons.visibility_off_outlined;
-  void changeIconSuffix() {
-    isObscureText = !isObscureText;
-    iconDataSuffixIcon = isObscureText
-        ? Icons.visibility_off_outlined
-        : Icons.visibility_outlined;
-    emit(ChangeSuffixIconState());
-  }
-
-  void createUser({
-    required String emailAddress,
-    required String password,
-  }) async {
-    emit(LoginLoadingState());
-    await FirebaseAuth.instance
+  void register(context) {
+    emit(RegisterLoadingState());
+    FirebaseAuth.instance
         .createUserWithEmailAndPassword(
-      email: emailAddress,
-      password: password,
-    )
+            email: emailController.text, password: passwordController.text)
         .then((value) {
-      emit(LoginSuccessState());
+      storeUser(value.user!.uid);
+      SharedPreferencesHelper.saveData(key: "uid", value: value.user!.uid);
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (_) => const ProfileScreen()));
+      emit(RegisterSuccessState());
     }).catchError((error) {
-      emit(LoginFailedState());
+      emit(RegisterFailedState());
     });
   }
 
-  void resetPassword({
-    required String emailAddress,
-  }) async {
+  storeUser(String docID) {
+    UserModel userModel = UserModel(
+        firstName: firstNameController.text,
+        lastName: lastNameController.text,
+        email: emailController.text,
+        phone: phoneController.text,
+        uId: docID,
+        address: addressController.text);
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(docID)
+        .set(userModel.toJson())
+        .then((value) {
+      emit(SetUserSuccessState());
+    }).catchError((error) {
+      emit(SetUserFailedState());
+    });
+  }
+
+  void login(context) {
     emit(LoginLoadingState());
-
-    await FirebaseAuth.instance
-        .sendPasswordResetEmail(email: emailAddress)
+    FirebaseAuth.instance
+        .signInWithEmailAndPassword(
+            email: emailController.text, password: passwordController.text)
         .then((value) {
+      log(value.user!.uid);
+      SharedPreferencesHelper.saveData(key: "uid", value: value.user!.uid);
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (_) => const ProfileScreen()));
+
       emit(LoginSuccessState());
     }).catchError((error) {
       emit(LoginFailedState());
     });
   }
 
-  // Future<UserCredential> signInWithGoogle() async {
-  //   // Trigger the authentication flow
-  //   final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-  //   // Obtain the auth details from the request
-  //   final GoogleSignInAuthentication? googleAuth =
-  //       await googleUser?.authentication;
-
-  //   // Create a new credential
-  //   final credential = GoogleAuthProvider.credential(
-  //     accessToken: googleAuth?.accessToken,
-  //     idToken: googleAuth?.idToken,
-  //   );
-
-  //   // Once signed in, return the UserCredential
-  //   return await FirebaseAuth.instance.signInWithCredential(credential);
-  // }
-
-  void googleSignIn() async {
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    final GoogleSignInAuthentication? googleAuth =
-        await googleUser?.authentication;
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
-    await FirebaseAuth.instance.signInWithCredential(credential).then((value) {
-      log("dsadsdsa${value.user!.email}");
-      emit(GoogleSignInSuccessState());
+  void forgetPassword() {
+    emit(ForgetPasswordLoadingState());
+    FirebaseAuth.instance
+        .sendPasswordResetEmail(email: emailController.text)
+        .then((value) {
+      emit(ForgetPasswordSuccessState());
     }).catchError((error) {
-      emit(GoogleSignInFailedState());
+      emit(ForgetPasswordFailedState());
+    });
+  }
+
+  UserModel? userModel;
+  getUser() {
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(SharedPreferencesHelper.getData(key: "uid"))
+        .get()
+        .then((value) {
+      userModel = UserModel.fromJson(value.data() as Map<String, dynamic>);
+
+      emailController.text = userModel!.email!;
+      phoneController.text = userModel!.phone!;
+      addressController.text = userModel!.address!;
+      firstNameController.text = userModel!.firstName!;
+      lastNameController.text = userModel!.lastName!;
+
+      emit(GetUserSuccessState());
+    }).catchError((error) {
+      emit(GetUserFailedState());
+    });
+  }
+
+  updateUser() {
+    emit(UpdateLoadingState());
+    UserModel userModel = UserModel(
+        firstName: firstNameController.text,
+        lastName: lastNameController.text,
+        email: emailController.text,
+        phone: phoneController.text,
+        uId: SharedPreferencesHelper.getData(key: "uid"),
+        address: addressController.text);
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(SharedPreferencesHelper.getData(key: "uid"))
+        .update(userModel.toJson())
+        .then((value) {
+      emit(UpdateSuccessState());
+    }).catchError((error) {
+      emit(UpdateFailedState());
     });
   }
 }
