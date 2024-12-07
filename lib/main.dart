@@ -6,6 +6,7 @@ import 'package:flutter_application_1/core/bloc_observer/bloc_observer.dart';
 import 'package:flutter_application_1/core/local/shared_preferences_helper.dart';
 import 'package:flutter_application_1/core/notifications/notifications.dart';
 import 'package:flutter_application_1/firebase_options.dart';
+import 'package:flutter_application_1/ui/home_screen.dart';
 import 'package:flutter_application_1/ui/login_screen.dart';
 import 'package:flutter_application_1/ui/profile_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -62,7 +63,7 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
             debugShowCheckedModeBanner: false,
             home: SharedPreferencesHelper.getData(key: "uid") != null
-                ? ProfileScreen()
+                ? HomeScreen()
                 : LoginScreen());
       },
     );

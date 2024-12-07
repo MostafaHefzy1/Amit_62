@@ -19,7 +19,6 @@ class ProfileScreen extends StatelessWidget {
         builder: (context, state) {
           var cubit = LogicCubit.get(context);
           return Scaffold(
-            appBar: const CustomAppBar(title: "Profile"),
             body: cubit.userModel == null
                 ? LinearProgressIndicator(
                   color: Colors.brown,

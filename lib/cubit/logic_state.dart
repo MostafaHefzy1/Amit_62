@@ -43,3 +43,21 @@ final class SetUserFailedState extends LogicState {}
 
 final class GetUserSuccessState extends LogicState {}
 final class GetUserFailedState extends LogicState {}
+
+
+
+final class GetMessagesSuccessState extends LogicState {}
+
+
+final class ChangeCurrentIndex extends LogicState {}
+
+
+
+final class GetAllUserSuccessState extends LogicState {}
+final class GetAllUserFailedState extends LogicState {}
+
+
+
+
+final class StoreMessageSuccessState extends LogicState {}
+final class StoreMessageFailedState extends LogicState {}
